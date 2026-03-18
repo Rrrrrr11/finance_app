@@ -1,33 +1,3 @@
-import subprocess
-import sys
-
-# 强制安装缺失的依赖
-def install_dependencies():
-    packages = ["plotly>=5.0.0", "pandas>=1.5.0", "numpy>=1.21.0"]
-    for pkg in packages:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", pkg])
-
-# 先安装依赖，再导入
-try:
-    import plotly.express as px
-except ImportError:
-    install_dependencies()
-    import plotly.express as px
-
-# 原有代码继续...
-import streamlit as st
-import pandas as pd
-import numpy as np
-import plotly.graph_objects as go
-
-# 页面配置
-st.set_page_config(
-    page_title="数据集分析可视化工具",
-    page_icon="📊",
-    layout="wide"
-)
-
-
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -126,4 +96,4 @@ else:
 
 # 页脚
 st.markdown("---")
-st.caption("✅ 前端数据集分析工具")
+st.caption("✅ 纯前端数据集分析工具 | 无需上传服务器 | 所有数据仅在本地处理")

@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import plotly.express as px
-import plotly.graph_objects as go
 
 # 页面配置
 st.set_page_config(
@@ -60,32 +58,22 @@ if uploaded_file is not None:
         else:
             st.warning("数据集中无数值型列，无法生成统计分析")
         
-        # 4. 数据可视化区域
+        # 4. 数据可视化区域（改用Streamlit原生图表，无Plotly依赖）
         st.subheader("📊 数据可视化")
         if numeric_cols:
             selected_col = st.selectbox("选择要可视化的列", numeric_cols)
-            chart_type = st.radio("选择图表类型", ["柱状图", "折线图", "饼图"])
+            chart_type = st.radio("选择图表类型", ["柱状图", "折线图"])
             
             # 准备可视化数据
             plot_data = df[selected_col].dropna()
-            if len(plot_data) > 50:  # 限制数据量，避免图表卡顿
+            if len(plot_data) > 50:  # 限制数据量，避免卡顿
                 plot_data = plot_data.head(50)
             
-            # 生成图表
+            # 生成原生图表
             if chart_type == "柱状图":
-                fig = px.bar(x=plot_data.index, y=plot_data.values, labels={"x":"数据序号", "y":selected_col})
+                st.bar_chart(plot_data, use_container_width=True)
             elif chart_type == "折线图":
-                fig = px.line(x=plot_data.index, y=plot_data.values, labels={"x":"数据序号", "y":selected_col})
-            elif chart_type == "饼图":
-                # 饼图需要分类数据，这里对数值分段
-                bins = np.linspace(plot_data.min(), plot_data.max(), 5)
-                labels = [f"{bins[i]:.1f}-{bins[i+1]:.1f}" for i in range(len(bins)-1)]
-                plot_data_binned = pd.cut(plot_data, bins=bins, labels=labels, include_lowest=True)
-                count_data = plot_data_binned.value_counts()
-                fig = px.pie(values=count_data.values, names=count_data.index, title=selected_col)
-            
-            fig.update_layout(height=500)
-            st.plotly_chart(fig, use_container_width=True)
+                st.line_chart(plot_data, use_container_width=True)
         else:
             st.warning("数据集中无数值型列，无法生成可视化图表")
             
